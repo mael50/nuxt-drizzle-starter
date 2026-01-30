@@ -1,4 +1,4 @@
-import { useDrizzle, tables, eq } from '~~/db'
+import { userRepository } from '~~/server/repositories/user.repository'
 
 export default defineEventHandler(async (event) => {
   const { email, password } = await readBody(event)
@@ -6,41 +6,32 @@ export default defineEventHandler(async (event) => {
   if (!email || !password) {
     throw createError({
       statusCode: 400,
-      message: 'Email and password are required'
+      message: 'Email and password are required',
     })
   }
 
-  const drizzle = useDrizzle()
-
-  // Check if user exists
-  const existingUser = await drizzle.query.users.findFirst({
-    where: eq(tables.users.email, email)
-  })
+  const existingUser = await userRepository.findByEmail(email)
 
   if (existingUser) {
     throw createError({
       statusCode: 400,
-      message: 'User already exists'
+      message: 'User already exists',
     })
   }
 
   const hashedPassword = await hashPassword(password)
 
-  await drizzle.insert(tables.users).values({
+  const newUser = await userRepository.create({
     email,
     password: hashedPassword,
     name: email.split('@')[0],
-    avatar: `https://unavatar.io/${email}`
-  })
-
-  const newUser = await drizzle.query.users.findFirst({
-    where: eq(tables.users.email, email)
+    avatar: `https://unavatar.io/${email}`,
   })
 
   if (!newUser) {
-     throw createError({
+    throw createError({
       statusCode: 500,
-      message: 'Error creating user'
+      message: 'Error creating user',
     })
   }
 

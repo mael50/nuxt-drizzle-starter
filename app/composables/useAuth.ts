@@ -11,23 +11,23 @@ export const useAuth = () => {
     isRegister.value = !isRegister.value
   }
 
-  async function onSubmit(event: FormSubmitEvent<AuthSchema>) {
-    if (loading.value) return
+  async function onSubmit(event?: FormSubmitEvent<AuthSchema>) {
+    if (!event || loading.value) return
     loading.value = true
     try {
       const endpoint = isRegister.value ? '/api/auth/register' : '/api/auth/login'
       await $fetch(endpoint, {
         method: 'POST',
-        body: event.data
+        body: event.data,
       })
       await fetchSession()
       toast.add({ title: 'Succès', color: 'success' })
-      return navigateTo('/')
+      await navigateTo('/')
     } catch (err: any) {
       toast.add({
         title: 'Erreur',
         description: err.data?.message || err.message,
-        color: 'error'
+        color: 'error',
       })
     } finally {
       loading.value = false
@@ -36,7 +36,7 @@ export const useAuth = () => {
 
   const logout = async () => {
     await clear()
-    return navigateTo('/login')
+    await navigateTo('/login')
   }
 
   return {
@@ -46,6 +46,6 @@ export const useAuth = () => {
     loading,
     toggleMode,
     onSubmit,
-    logout
+    logout,
   }
 }

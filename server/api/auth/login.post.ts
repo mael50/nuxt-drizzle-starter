@@ -1,4 +1,4 @@
-import { useDrizzle, tables, eq } from '~~/db'
+import { userRepository } from '~~/server/repositories/user.repository'
 
 export default defineEventHandler(async (event) => {
   const { email, password } = await readBody(event)
@@ -6,20 +6,16 @@ export default defineEventHandler(async (event) => {
   if (!email || !password) {
     throw createError({
       statusCode: 400,
-      message: 'Email and password are required'
+      message: 'Email and password are required',
     })
   }
 
-  const drizzle = useDrizzle()
-
-  const user = await drizzle.query.users.findFirst({
-    where: eq(tables.users.email, email)
-  })
+  const user = await userRepository.findByEmail(email)
 
   if (!user || !user.password) {
     throw createError({
       statusCode: 401,
-      message: 'Invalid credentials'
+      message: 'Invalid credentials',
     })
   }
 
@@ -28,7 +24,7 @@ export default defineEventHandler(async (event) => {
   if (!isValid) {
     throw createError({
       statusCode: 401,
-      message: 'Invalid credentials'
+      message: 'Invalid credentials',
     })
   }
 
