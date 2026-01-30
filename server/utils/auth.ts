@@ -1,6 +1,7 @@
 import type { H3Event } from 'h3'
 
 export const setUserAuthSession = async (event: H3Event, user: any) => {
+  console.log('Setting session for user:', user.email)
   await setUserSession(event, {
     user: {
       id: user.id,

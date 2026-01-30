@@ -1,0 +1,50 @@
+services:
+  server:
+    build:
+      context: .
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      DB_HOST: db
+      NUXT_PRIVATE_DATABASE_URL: mysql://${DB_USER:-root}:${DB_PASSWORD:-password}@db:${DB_PORT:-3306}/${DB_NAME:-nuxt_db}
+      # IMPORTANT: Disable secure cookies for local testing over HTTP
+      NUXT_SESSION_COOKIE_SECURE: "false"
+    ports:
+      - 3000:3000
+    depends_on:
+      db:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
+
+  migration:
+    build:
+      context: .
+      target: build
+    env_file: .env
+    environment:
+      NUXT_PRIVATE_DATABASE_URL: mysql://${DB_USER:-root}:${DB_PASSWORD:-password}@db:${DB_PORT:-3306}/${DB_NAME:-nuxt_db}
+    depends_on:
+      db:
+        condition: service_healthy
+    command: npx drizzle-kit push
+
+  db:
+    image: mysql:8.0
+    restart: always
+    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-password}
+      MYSQL_DATABASE: ${DB_NAME:-nuxt_db}
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db-data:
