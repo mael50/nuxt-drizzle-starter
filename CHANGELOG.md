@@ -1,3 +1,17 @@
+# [1.1.0](https://github.com/mael50/nuxt-drizzle-starter/compare/v1.0.0...v1.1.0) (2026-01-30)
+
+
+### Bug Fixes
+
+* missing package ([c6bb8c2](https://github.com/mael50/nuxt-drizzle-starter/commit/c6bb8c290cc3c42a3303c9531b81c28296df8f3e))
+
+
+### Features
+
+* Add default and auth layouts, revamp authentication UI components, and use validated body parsing for auth API routes. ([de05115](https://github.com/mael50/nuxt-drizzle-starter/commit/de051156088dcb990f260c91793971529d1c47d2))
+* Add Vitest for unit tests and Playwright for E2E tests, alongside UI improvements for authentication layouts. ([752f888](https://github.com/mael50/nuxt-drizzle-starter/commit/752f8881785bc367dfa918538d760b61ef7c69d6))
+* display user profile information component and refine environment variable validation. ([6580a34](https://github.com/mael50/nuxt-drizzle-starter/commit/6580a344a1d58e65d8858da4d66e9e81d69d521f))
+
 # 1.0.0 (2026-01-30)
 
 
