@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "master", "main" ]
+    branches: ['main', 'develop']
   pull_request:
-    branches: [ "master", "main" ]
+    branches: ['main', 'develop']
 
 env:
   REGISTRY: ghcr.io
@@ -38,6 +38,7 @@ jobs:
 
       - name: Semantic Release
         id: semantic
+        if: github.ref == 'refs/heads/main'
         uses: cycjimmy/semantic-release-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -73,6 +74,7 @@ jobs:
           tags: |
             ${{ steps.semantic.outputs.new_release_published == 'true' && format('{0}/{1}:{2}', env.REGISTRY, env.IMAGE_NAME, steps.semantic.outputs.new_release_version) || '' }}
             ${{ steps.semantic.outputs.new_release_published == 'true' && format('{0}/{1}:latest', env.REGISTRY, env.IMAGE_NAME) || '' }}
+            ${{ github.ref == 'refs/heads/develop' && format('{0}/{1}:develop', env.REGISTRY, env.IMAGE_NAME) || '' }}
             ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
