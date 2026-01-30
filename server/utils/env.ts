@@ -10,8 +10,6 @@ const envSchema = z.object({
 export const validateEnv = () => {
   const result = envSchema.safeParse(process.env)
 
-  console.log(result.error)
-
   if (!result.success) {
     console.error('❌ Invalid environment variables:', result.error.flatten())
     throw new Error('Invalid environment variables')
