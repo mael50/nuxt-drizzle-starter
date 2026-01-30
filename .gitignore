@@ -22,3 +22,6 @@ logs
 .env
 !.env.example
 typecheck_output.txt
+
+playwright-report
+test-results

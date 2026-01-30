@@ -1,14 +1,8 @@
 import { userRepository } from '~~/server/repositories/user.repository'
+import { authSchema } from '~~/app/utils/auth'
 
 export default defineEventHandler(async (event) => {
-  const { email, password } = await readBody(event)
-
-  if (!email || !password) {
-    throw createError({
-      statusCode: 400,
-      message: 'Email and password are required',
-    })
-  }
+  const { email, password } = await readValidatedBody(event, authSchema.parse)
 
   const user = await userRepository.findByEmail(email)
 
